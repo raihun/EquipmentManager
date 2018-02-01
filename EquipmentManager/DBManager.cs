@@ -14,16 +14,25 @@ namespace EquipmentManager {
         private SQLiteConnection con { get; set; }
         private SQLiteDataAdapter adapter { get; set; }
 
-        public DataTable load() {
+        public DBManager() {
+            this.connect();
+        }
+
+        public void connect() {
             string path = Application.StartupPath + @"\Data.db";
-            using (this.con = new SQLiteConnection("Data Source=" + path)) {
-                this.dataTable = new DataTable();
+            this.con = new SQLiteConnection("Data Source=" + path);
+            this.con.Open();
+        }
 
-                this.adapter = new SQLiteDataAdapter("SELECT * FROM equipment;", this.con);
-                this.adapter.Fill(this.dataTable);
+        public void disconnect() {
+            this.con.Close();
+        }
 
-                return this.dataTable;
-            }
+        public DataTable load() {
+            this.dataTable = new DataTable();
+            this.adapter = new SQLiteDataAdapter("SELECT * FROM equipment;", this.con);
+            this.adapter.Fill(this.dataTable);
+            return this.dataTable;
         }
 
         public void update() {
@@ -39,6 +48,10 @@ namespace EquipmentManager {
             } catch(Exception e) {
                 MessageBox.Show(e.Message, "Error");
             }
+        }
+
+        public DataTable getDataTable() {
+            return this.dataTable;
         }
     }
 }

@@ -105,6 +105,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\noimage.png" />
     <None Include="bin\Debug\images\noimage.png" />
     <Content Include="Icon64x64.ico" />
   </ItemGroup>

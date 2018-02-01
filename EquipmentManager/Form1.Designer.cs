@@ -26,20 +26,13 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.equipmentTable = new System.Windows.Forms.DataGridView();
-            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.model_number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.location = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.inspection = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.equipmentImage = new System.Windows.Forms.PictureBox();
             this.codeLabel = new System.Windows.Forms.Label();
             this.codeBox = new System.Windows.Forms.TextBox();
             this.nameLabel = new System.Windows.Forms.Label();
             this.nameBox = new System.Windows.Forms.TextBox();
             this.modemNumberLabel = new System.Windows.Forms.Label();
-            this.modemNumberBox = new System.Windows.Forms.TextBox();
+            this.modelNumberBox = new System.Windows.Forms.TextBox();
             this.locationBox = new System.Windows.Forms.TextBox();
             this.locationLabel = new System.Windows.Forms.Label();
             this.numberBox = new System.Windows.Forms.TextBox();
@@ -54,9 +47,26 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.serialPort = new System.IO.Ports.SerialPort(this.components);
             this.modeGroup = new System.Windows.Forms.GroupBox();
+            this.executeButton = new System.Windows.Forms.Button();
+            this.barcodeReaderSettingGroupBox = new System.Windows.Forms.GroupBox();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.portBox = new System.Windows.Forms.TextBox();
+            this.portLabel = new System.Windows.Forms.Label();
+            this.databaseGroupBox = new System.Windows.Forms.GroupBox();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.model_number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.location = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.inspection = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.clearButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentImage)).BeginInit();
             this.modeGroup.SuspendLayout();
+            this.barcodeReaderSettingGroupBox.SuspendLayout();
+            this.databaseGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // equipmentTable
@@ -75,57 +85,7 @@
             this.equipmentTable.RowTemplate.Height = 21;
             this.equipmentTable.Size = new System.Drawing.Size(950, 678);
             this.equipmentTable.TabIndex = 0;
-            // 
-            // code
-            // 
-            this.code.Frozen = true;
-            this.code.HeaderText = "番号";
-            this.code.Name = "code";
-            this.code.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.code.Width = 55;
-            // 
-            // name
-            // 
-            this.name.Frozen = true;
-            this.name.HeaderText = "名称";
-            this.name.Name = "name";
-            this.name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.name.Width = 250;
-            // 
-            // model_number
-            // 
-            this.model_number.Frozen = true;
-            this.model_number.HeaderText = "型番";
-            this.model_number.Name = "model_number";
-            this.model_number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // location
-            // 
-            this.location.HeaderText = "場所";
-            this.location.Name = "location";
-            this.location.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.location.Width = 55;
-            // 
-            // number
-            // 
-            this.number.HeaderText = "個数";
-            this.number.Name = "number";
-            this.number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.number.Width = 55;
-            // 
-            // inspection
-            // 
-            this.inspection.HeaderText = "検品数";
-            this.inspection.Name = "inspection";
-            this.inspection.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.inspection.Width = 65;
-            // 
-            // remarks
-            // 
-            this.remarks.HeaderText = "備考";
-            this.remarks.Name = "remarks";
-            this.remarks.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.remarks.Width = 320;
+            this.equipmentTable.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.equipmentTable_RowEnter);
             // 
             // equipmentImage
             // 
@@ -151,6 +111,7 @@
             this.codeBox.Name = "codeBox";
             this.codeBox.Size = new System.Drawing.Size(249, 19);
             this.codeBox.TabIndex = 3;
+            this.codeBox.TextChanged += new System.EventHandler(this.codeBox_TextChanged);
             // 
             // nameLabel
             // 
@@ -177,12 +138,12 @@
             this.modemNumberLabel.TabIndex = 6;
             this.modemNumberLabel.Text = "型　　番:";
             // 
-            // modemNumberBox
+            // modelNumberBox
             // 
-            this.modemNumberBox.Location = new System.Drawing.Point(1008, 316);
-            this.modemNumberBox.Name = "modemNumberBox";
-            this.modemNumberBox.Size = new System.Drawing.Size(249, 19);
-            this.modemNumberBox.TabIndex = 7;
+            this.modelNumberBox.Location = new System.Drawing.Point(1008, 316);
+            this.modelNumberBox.Name = "modelNumberBox";
+            this.modelNumberBox.Size = new System.Drawing.Size(249, 19);
+            this.modelNumberBox.TabIndex = 7;
             // 
             // locationBox
             // 
@@ -209,6 +170,7 @@
             // 
             // inspectionBox
             // 
+            this.inspectionBox.Enabled = false;
             this.inspectionBox.Location = new System.Drawing.Point(1008, 391);
             this.inspectionBox.Name = "inspectionBox";
             this.inspectionBox.Size = new System.Drawing.Size(249, 19);
@@ -250,39 +212,44 @@
             // 
             // searchButton
             // 
-            this.searchButton.Location = new System.Drawing.Point(138, 18);
+            this.searchButton.Location = new System.Drawing.Point(154, 18);
             this.searchButton.Name = "searchButton";
-            this.searchButton.Size = new System.Drawing.Size(60, 25);
+            this.searchButton.Size = new System.Drawing.Size(68, 25);
             this.searchButton.TabIndex = 16;
             this.searchButton.Text = "検 索";
             this.searchButton.UseVisualStyleBackColor = true;
+            this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
             // 
             // addButton
             // 
+            this.addButton.Enabled = false;
             this.addButton.Location = new System.Drawing.Point(6, 18);
             this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(60, 25);
+            this.addButton.Size = new System.Drawing.Size(68, 25);
             this.addButton.TabIndex = 17;
             this.addButton.Text = "追 加";
             this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
             // inspectionButton
             // 
-            this.inspectionButton.Location = new System.Drawing.Point(204, 18);
+            this.inspectionButton.Location = new System.Drawing.Point(228, 18);
             this.inspectionButton.Name = "inspectionButton";
-            this.inspectionButton.Size = new System.Drawing.Size(60, 25);
+            this.inspectionButton.Size = new System.Drawing.Size(68, 25);
             this.inspectionButton.TabIndex = 18;
             this.inspectionButton.Text = "検 品";
             this.inspectionButton.UseVisualStyleBackColor = true;
+            this.inspectionButton.Click += new System.EventHandler(this.inspectionButton_Click);
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(72, 18);
+            this.deleteButton.Location = new System.Drawing.Point(80, 18);
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(60, 25);
+            this.deleteButton.Size = new System.Drawing.Size(68, 25);
             this.deleteButton.TabIndex = 19;
             this.deleteButton.Text = "削 除";
             this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // serialPort
             // 
@@ -302,11 +269,142 @@
             this.modeGroup.TabStop = false;
             this.modeGroup.Text = "■ 動作モード選択";
             // 
+            // executeButton
+            // 
+            this.executeButton.Location = new System.Drawing.Point(957, 448);
+            this.executeButton.Name = "executeButton";
+            this.executeButton.Size = new System.Drawing.Size(300, 40);
+            this.executeButton.TabIndex = 21;
+            this.executeButton.Text = "新規追加";
+            this.executeButton.UseVisualStyleBackColor = true;
+            this.executeButton.Click += new System.EventHandler(this.executeButton_Click);
+            // 
+            // barcodeReaderSettingGroupBox
+            // 
+            this.barcodeReaderSettingGroupBox.Controls.Add(this.connectButton);
+            this.barcodeReaderSettingGroupBox.Controls.Add(this.portBox);
+            this.barcodeReaderSettingGroupBox.Controls.Add(this.portLabel);
+            this.barcodeReaderSettingGroupBox.Location = new System.Drawing.Point(957, 637);
+            this.barcodeReaderSettingGroupBox.Name = "barcodeReaderSettingGroupBox";
+            this.barcodeReaderSettingGroupBox.Size = new System.Drawing.Size(300, 42);
+            this.barcodeReaderSettingGroupBox.TabIndex = 22;
+            this.barcodeReaderSettingGroupBox.TabStop = false;
+            this.barcodeReaderSettingGroupBox.Text = "■ バーコードリーダー 設定";
+            // 
+            // connectButton
+            // 
+            this.connectButton.Location = new System.Drawing.Point(241, 14);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(54, 23);
+            this.connectButton.TabIndex = 2;
+            this.connectButton.Text = "接続";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            // 
+            // portBox
+            // 
+            this.portBox.Location = new System.Drawing.Point(73, 16);
+            this.portBox.Name = "portBox";
+            this.portBox.Size = new System.Drawing.Size(55, 19);
+            this.portBox.TabIndex = 1;
+            this.portBox.Text = "COM1";
+            // 
+            // portLabel
+            // 
+            this.portLabel.AutoSize = true;
+            this.portLabel.Location = new System.Drawing.Point(7, 19);
+            this.portLabel.Name = "portLabel";
+            this.portLabel.Size = new System.Drawing.Size(60, 12);
+            this.portLabel.TabIndex = 0;
+            this.portLabel.Text = "COMポート:";
+            // 
+            // databaseGroupBox
+            // 
+            this.databaseGroupBox.Controls.Add(this.saveButton);
+            this.databaseGroupBox.Location = new System.Drawing.Point(957, 589);
+            this.databaseGroupBox.Name = "databaseGroupBox";
+            this.databaseGroupBox.Size = new System.Drawing.Size(300, 42);
+            this.databaseGroupBox.TabIndex = 23;
+            this.databaseGroupBox.TabStop = false;
+            this.databaseGroupBox.Text = "■ データベース 操作";
+            // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(6, 13);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(54, 23);
+            this.saveButton.TabIndex = 3;
+            this.saveButton.Text = "保存";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
+            // code
+            // 
+            this.code.HeaderText = "番号";
+            this.code.Name = "code";
+            this.code.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.code.Width = 55;
+            // 
+            // name
+            // 
+            this.name.HeaderText = "名称";
+            this.name.Name = "name";
+            this.name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.name.Width = 250;
+            // 
+            // model_number
+            // 
+            this.model_number.HeaderText = "型番";
+            this.model_number.Name = "model_number";
+            this.model_number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // location
+            // 
+            this.location.HeaderText = "場所";
+            this.location.Name = "location";
+            this.location.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.location.Width = 55;
+            // 
+            // number
+            // 
+            this.number.HeaderText = "個数";
+            this.number.Name = "number";
+            this.number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.number.Width = 55;
+            // 
+            // inspection
+            // 
+            this.inspection.HeaderText = "検品数";
+            this.inspection.Name = "inspection";
+            this.inspection.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.inspection.Width = 65;
+            // 
+            // remarks
+            // 
+            this.remarks.HeaderText = "備考";
+            this.remarks.Name = "remarks";
+            this.remarks.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.remarks.Width = 330;
+            // 
+            // clearButton
+            // 
+            this.clearButton.Location = new System.Drawing.Point(957, 494);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(300, 23);
+            this.clearButton.TabIndex = 24;
+            this.clearButton.Text = "クリア";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.clearButton);
+            this.Controls.Add(this.databaseGroupBox);
+            this.Controls.Add(this.barcodeReaderSettingGroupBox);
+            this.Controls.Add(this.executeButton);
             this.Controls.Add(this.modeGroup);
             this.Controls.Add(this.remarksLabel);
             this.Controls.Add(this.inspectionLabel);
@@ -316,7 +414,7 @@
             this.Controls.Add(this.numberBox);
             this.Controls.Add(this.locationLabel);
             this.Controls.Add(this.locationBox);
-            this.Controls.Add(this.modemNumberBox);
+            this.Controls.Add(this.modelNumberBox);
             this.Controls.Add(this.modemNumberLabel);
             this.Controls.Add(this.nameBox);
             this.Controls.Add(this.nameLabel);
@@ -327,12 +425,15 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "備品管理システム";
+            this.Text = "備品管理システム (v1.0.0)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.equipmentTable)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentImage)).EndInit();
             this.modeGroup.ResumeLayout(false);
+            this.barcodeReaderSettingGroupBox.ResumeLayout(false);
+            this.barcodeReaderSettingGroupBox.PerformLayout();
+            this.databaseGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -347,7 +448,7 @@
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.TextBox nameBox;
         private System.Windows.Forms.Label modemNumberLabel;
-        private System.Windows.Forms.TextBox modemNumberBox;
+        private System.Windows.Forms.TextBox modelNumberBox;
         private System.Windows.Forms.TextBox locationBox;
         private System.Windows.Forms.Label locationLabel;
         private System.Windows.Forms.TextBox numberBox;
@@ -361,6 +462,14 @@
         private System.Windows.Forms.Button inspectionButton;
         private System.Windows.Forms.Button deleteButton;
         private System.IO.Ports.SerialPort serialPort;
+        private System.Windows.Forms.GroupBox modeGroup;
+        private System.Windows.Forms.Button executeButton;
+        private System.Windows.Forms.GroupBox barcodeReaderSettingGroupBox;
+        private System.Windows.Forms.TextBox portBox;
+        private System.Windows.Forms.Label portLabel;
+        private System.Windows.Forms.Button connectButton;
+        private System.Windows.Forms.GroupBox databaseGroupBox;
+        private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn code;
         private System.Windows.Forms.DataGridViewTextBoxColumn name;
         private System.Windows.Forms.DataGridViewTextBoxColumn model_number;
@@ -368,7 +477,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn number;
         private System.Windows.Forms.DataGridViewTextBoxColumn inspection;
         private System.Windows.Forms.DataGridViewTextBoxColumn remarks;
-        private System.Windows.Forms.GroupBox modeGroup;
+        private System.Windows.Forms.Button clearButton;
     }
 }
 
