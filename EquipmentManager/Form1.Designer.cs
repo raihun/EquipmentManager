@@ -26,6 +26,13 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.equipmentTable = new System.Windows.Forms.DataGridView();
+            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.model_number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.location = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.inspection = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.equipmentImage = new System.Windows.Forms.PictureBox();
             this.codeLabel = new System.Windows.Forms.Label();
             this.codeBox = new System.Windows.Forms.TextBox();
@@ -54,13 +61,6 @@
             this.portLabel = new System.Windows.Forms.Label();
             this.databaseGroupBox = new System.Windows.Forms.GroupBox();
             this.saveButton = new System.Windows.Forms.Button();
-            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.model_number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.location = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.inspection = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clearButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentImage)).BeginInit();
@@ -87,9 +87,57 @@
             this.equipmentTable.TabIndex = 0;
             this.equipmentTable.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.equipmentTable_RowEnter);
             // 
+            // code
+            // 
+            this.code.HeaderText = "番号";
+            this.code.Name = "code";
+            this.code.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.code.Width = 55;
+            // 
+            // name
+            // 
+            this.name.HeaderText = "名称";
+            this.name.Name = "name";
+            this.name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.name.Width = 250;
+            // 
+            // model_number
+            // 
+            this.model_number.HeaderText = "型番";
+            this.model_number.Name = "model_number";
+            this.model_number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            // 
+            // location
+            // 
+            this.location.HeaderText = "場所";
+            this.location.Name = "location";
+            this.location.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.location.Width = 55;
+            // 
+            // number
+            // 
+            this.number.HeaderText = "個数";
+            this.number.Name = "number";
+            this.number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.number.Width = 55;
+            // 
+            // inspection
+            // 
+            this.inspection.HeaderText = "検品数";
+            this.inspection.Name = "inspection";
+            this.inspection.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.inspection.Width = 65;
+            // 
+            // remarks
+            // 
+            this.remarks.HeaderText = "備考";
+            this.remarks.Name = "remarks";
+            this.remarks.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.remarks.Width = 330;
+            // 
             // equipmentImage
             // 
-            this.equipmentImage.Image = global::EquipmentManager.Properties.Resources.noimage;
+            this.equipmentImage.Image = ((System.Drawing.Image)(resources.GetObject("equipmentImage.Image")));
             this.equipmentImage.Location = new System.Drawing.Point(957, 57);
             this.equipmentImage.Name = "equipmentImage";
             this.equipmentImage.Size = new System.Drawing.Size(300, 200);
@@ -337,54 +385,6 @@
             this.saveButton.Text = "保存";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
-            // 
-            // code
-            // 
-            this.code.HeaderText = "番号";
-            this.code.Name = "code";
-            this.code.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.code.Width = 55;
-            // 
-            // name
-            // 
-            this.name.HeaderText = "名称";
-            this.name.Name = "name";
-            this.name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.name.Width = 250;
-            // 
-            // model_number
-            // 
-            this.model_number.HeaderText = "型番";
-            this.model_number.Name = "model_number";
-            this.model_number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            // 
-            // location
-            // 
-            this.location.HeaderText = "場所";
-            this.location.Name = "location";
-            this.location.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.location.Width = 55;
-            // 
-            // number
-            // 
-            this.number.HeaderText = "個数";
-            this.number.Name = "number";
-            this.number.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.number.Width = 55;
-            // 
-            // inspection
-            // 
-            this.inspection.HeaderText = "検品数";
-            this.inspection.Name = "inspection";
-            this.inspection.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.inspection.Width = 65;
-            // 
-            // remarks
-            // 
-            this.remarks.HeaderText = "備考";
-            this.remarks.Name = "remarks";
-            this.remarks.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.remarks.Width = 330;
             // 
             // clearButton
             // 

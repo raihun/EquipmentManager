@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data; // DataTable
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -234,9 +235,9 @@ namespace EquipmentManager {
             string code = this.codeBox.Text;
 
             // 検品モード時に、コード欄の変更
-            if (mode.Equals("inspection")) {
+            if (this.codeBox.Focused && mode.Equals("inspection")) {
                 if (code.Equals("")) return; // 空欄
-                this.reflectBox(code);
+                this.reflectBox(code, true);
             }
         }
 
@@ -251,6 +252,10 @@ namespace EquipmentManager {
             this.numberBox.Text = "";
             this.inspectionBox.Text = "";
             this.remarksBox.Text = "";
+
+            // イメージ欄クリア
+            Graphics pg = Graphics.FromHwnd(this.equipmentImage.Handle);
+            pg.DrawImage(Properties.Resources.noimage, new Point(0, 0)); // クリア
         }
         #endregion
 
@@ -312,24 +317,22 @@ namespace EquipmentManager {
             // 反映
             this.Invoke((MethodInvoker)delegate {
                 this.codeBox.Text = String.Format("{0}", code);
-                this.reflectBox(code);
+                this.reflectBox(code, true);
             });
         }
         #endregion
 
         private void equipmentTable_RowEnter(object sender, DataGridViewCellEventArgs e) {
-            if (mode.Equals("delete") || mode.Equals("inspection")) {
-                int i = e.RowIndex;
-                this.reflectBox(String.Format("{0}", this.equipmentTable.Rows[i].Cells[0].Value));
-            }
+            int i = e.RowIndex;
+            this.reflectBox(String.Format("{0}", this.equipmentTable.Rows[i].Cells[0].Value), false);
         }
 
         #region 番号を基に各入力欄へ反映
-        private bool reflectBox(int code) {
-            return this.reflectBox(String.Format("{0}", code));
+        private bool reflectBox(int code, bool focus) {
+            return this.reflectBox(String.Format("{0}", code), focus);
         }
 
-        private bool reflectBox(string code) {
+        private bool reflectBox(string code, bool focus) {
             bool find = false;
             if (code.Equals("")) return find; // 空欄チェック
 
@@ -346,19 +349,47 @@ namespace EquipmentManager {
                 this.remarksBox.Text = _dr["remarks"].ToString();
 
                 //フォーカス
-                int index = dt.Rows.IndexOf(_dr);
-                Console.WriteLine(index);
-                this.equipmentTable.FirstDisplayedScrollingRowIndex = index;
+                if(focus) {
+                    int index = dt.Rows.IndexOf(_dr);
+                    // Console.WriteLine(index);
+                    this.equipmentTable.FirstDisplayedScrollingRowIndex = index;
+                }
+
+                // 該当コード発見
                 find = true;
                 break;
             }
 
-            if(find) {
-                // equipmentTableに該当コードが存在
-
-            } else {
+            
+            if (!find) {
                 // equipmentTableに該当コードがない
                 this.clearBox(false);
+            }
+
+            // images配下チェック
+            Graphics pg = Graphics.FromHwnd(this.equipmentImage.Handle);
+            pg.DrawImage(Properties.Resources.noimage, new Point(0, 0)); // クリア
+
+            string imagePath = String.Format(@"images\\{0}.jpg", code);
+            if (File.Exists(imagePath)) {
+                int resizeHeight = 200;
+                int resizeWidth = 300;
+
+                Bitmap bmp = new Bitmap(imagePath);
+                if(bmp.Height > bmp.Width) {
+                    // 縦長写真の場合
+                    resizeWidth = (int)(bmp.Width * ((double)resizeHeight / (double)bmp.Height));
+                } else {
+                    // 横長写真の場合
+                    resizeHeight = (int)(bmp.Height * ((double)resizeWidth / (double)bmp.Width));
+                }
+                
+                Bitmap resizeBmp = new Bitmap(resizeWidth, resizeHeight);
+                Graphics g = Graphics.FromImage(resizeBmp);
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(bmp, 0, 0, resizeWidth, resizeHeight);
+                g.Dispose();
+                pg.DrawImage(resizeBmp, new Point(0, 0));
             }
 
             return find;
