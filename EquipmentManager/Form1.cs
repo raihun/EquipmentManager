@@ -374,14 +374,18 @@ namespace EquipmentManager {
             if (File.Exists(imagePath)) {
                 int resizeHeight = 200;
                 int resizeWidth = 300;
+                int x = 0;
+                int y = 0;
 
                 Bitmap bmp = new Bitmap(imagePath);
                 if(bmp.Height > bmp.Width) {
                     // 縦長写真の場合
                     resizeWidth = (int)(bmp.Width * ((double)resizeHeight / (double)bmp.Height));
+                    x = (300 - resizeWidth) / 2;
                 } else {
                     // 横長写真の場合
                     resizeHeight = (int)(bmp.Height * ((double)resizeWidth / (double)bmp.Width));
+                    y = (200 - resizeHeight) / 2;
                 }
                 
                 Bitmap resizeBmp = new Bitmap(resizeWidth, resizeHeight);
@@ -389,7 +393,7 @@ namespace EquipmentManager {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(bmp, 0, 0, resizeWidth, resizeHeight);
                 g.Dispose();
-                pg.DrawImage(resizeBmp, new Point(0, 0));
+                pg.DrawImage(resizeBmp, new Point(x, y));
             }
 
             return find;
