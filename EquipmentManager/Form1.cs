@@ -372,8 +372,8 @@ namespace EquipmentManager {
 
             string imagePath = String.Format(@"images\\{0}.jpg", code);
             if (File.Exists(imagePath)) {
-                int resizeHeight = 200;
-                int resizeWidth = 300;
+                int resizeHeight = this.equipmentImage.Height;
+                int resizeWidth = this.equipmentImage.Width;
                 int x = 0;
                 int y = 0;
 
@@ -381,11 +381,11 @@ namespace EquipmentManager {
                 if(bmp.Height > bmp.Width) {
                     // 縦長写真の場合
                     resizeWidth = (int)(bmp.Width * ((double)resizeHeight / (double)bmp.Height));
-                    x = (300 - resizeWidth) / 2;
+                    x = (this.equipmentImage.Width - resizeWidth) / 2;
                 } else {
                     // 横長写真の場合
                     resizeHeight = (int)(bmp.Height * ((double)resizeWidth / (double)bmp.Width));
-                    y = (200 - resizeHeight) / 2;
+                    y = (this.equipmentImage.Height - resizeHeight) / 2;
                 }
                 
                 Bitmap resizeBmp = new Bitmap(resizeWidth, resizeHeight);
