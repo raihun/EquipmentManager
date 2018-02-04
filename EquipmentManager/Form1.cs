@@ -301,11 +301,8 @@ namespace EquipmentManager {
 
         #region バーコードリーダー イベント
         private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e) {
-            // バーコードリーダーより受信
-            string receive = this.serialPort.ReadLine().ToString();
-
-            // 改行コード除去
-            receive = receive.Replace("\r", "").Replace("\n", "");
+            string receive = this.serialPort.ReadLine().ToString(); // バーコードリーダーより受信
+            receive = receive.Replace("\r", "").Replace("\n", "");  // 改行コード除去
 
             // フォーマットチェック
             Barcode b = new Barcode();
@@ -315,7 +312,20 @@ namespace EquipmentManager {
             // 反映
             this.Invoke((MethodInvoker)delegate {
                 this.codeBox.Text = String.Format("{0}", code);
-                this.reflectBox(code, true);
+                bool find = this.reflectBox(code, true);
+
+                // 検品モード時
+                if(find) this.inspectionBox.Focus();
+                if(find && mode.Equals("inspection")) {
+                    DataTable dt = this.db.getDataTable();
+                    DataRow[] drs = dt.Select(String.Format("code = {0}", code));
+                    foreach (DataRow dr in drs) {
+                        if(dr["number"].ToString().Equals("1")) {
+                            dr["inspection"] = 1;
+                        }
+                    }
+                }
+                this.reflectHighlight();
             });
         }
         #endregion
