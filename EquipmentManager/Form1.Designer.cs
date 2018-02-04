@@ -64,6 +64,7 @@
             this.clearButton = new System.Windows.Forms.Button();
             this.inspectionGroupBox = new System.Windows.Forms.GroupBox();
             this.clearInspectionButton = new System.Windows.Forms.Button();
+            this.readButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentImage)).BeginInit();
             this.modeGroup.SuspendLayout();
@@ -371,6 +372,7 @@
             // 
             // databaseGroupBox
             // 
+            this.databaseGroupBox.Controls.Add(this.readButton);
             this.databaseGroupBox.Controls.Add(this.saveButton);
             this.databaseGroupBox.Location = new System.Drawing.Point(957, 589);
             this.databaseGroupBox.Name = "databaseGroupBox";
@@ -418,6 +420,16 @@
             this.clearInspectionButton.Text = "検品数0クリア";
             this.clearInspectionButton.UseVisualStyleBackColor = true;
             this.clearInspectionButton.Click += new System.EventHandler(this.clearInspectionButton_Click);
+            // 
+            // readButton
+            // 
+            this.readButton.Location = new System.Drawing.Point(66, 13);
+            this.readButton.Name = "readButton";
+            this.readButton.Size = new System.Drawing.Size(54, 23);
+            this.readButton.TabIndex = 4;
+            this.readButton.Text = "読出";
+            this.readButton.UseVisualStyleBackColor = true;
+            this.readButton.Click += new System.EventHandler(this.readButton_Click);
             // 
             // MainForm
             // 
@@ -505,6 +517,7 @@
         private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.GroupBox inspectionGroupBox;
         private System.Windows.Forms.Button clearInspectionButton;
+        private System.Windows.Forms.Button readButton;
     }
 }
 

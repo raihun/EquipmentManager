@@ -265,6 +265,34 @@ namespace EquipmentManager {
         private void saveButton_Click(object sender, EventArgs e) {
             this.db.update();
         }
+        private void readButton_Click(object sender, EventArgs e) {
+            DialogResult result = MessageBox.Show(
+                "最後に保存ボタンを押した状態を読出します。\n宜しいですか。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.OK) this.db.read();
+        }
+        #endregion
+
+        #region 検品モード操作
+        private void clearInspectionButton_Click(object sender, EventArgs e) {
+            DialogResult result = MessageBox.Show(
+                "検品列を0クリアしますか。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.OK) {
+                DataTable dt = this.db.getDataTable();
+                DataRow[] drs = dt.Select();
+                foreach (DataRow dr in drs) dr["inspection"] = 0;
+            }
+            if (mode.Equals("inspection")) this.reflectHighlight();
+        }
         #endregion
 
         #region バーコードリーダー 設定
@@ -330,7 +358,8 @@ namespace EquipmentManager {
 
         private void equipmentTable_RowEnter(object sender, DataGridViewCellEventArgs e) {
             int i = e.RowIndex;
-            this.reflectBox(String.Format("{0}", this.equipmentTable.Rows[i].Cells[0].Value), false);
+            string code = String.Format("{0}", this.equipmentTable.Rows[i].Cells[0].Value);
+            this.reflectBox(code, false);
         }
 
         #region 番号を基に各入力欄へ反映
@@ -434,22 +463,6 @@ namespace EquipmentManager {
         }
         #endregion
 
-        #region 検品モード操作
-        private void clearInspectionButton_Click(object sender, EventArgs e) {
-            DialogResult result = MessageBox.Show(
-                "検品列を0クリアしますか。",
-                "確認",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2
-            );
-            if (result == DialogResult.OK) {
-                DataTable dt = this.db.getDataTable();
-                DataRow[] drs = dt.Select();
-                foreach (DataRow dr in drs) dr["inspection"] = 0;
-            }
-            if (mode.Equals("inspection")) this.reflectHighlight();
-        }
-        #endregion
+        
     }
 }
