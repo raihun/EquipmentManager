@@ -24,6 +24,18 @@ namespace EquipmentManager {
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            // 保存確認
+            DialogResult result = MessageBox.Show(
+                "データベースを保存しますか。\n保存していないデータは消えてしまいます。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.Yes) {
+                this.db.update();
+            }
+
             // データベース Close
             this.db.disconnect();
 
@@ -37,20 +49,14 @@ namespace EquipmentManager {
             this.equipmentTable.AutoGenerateColumns = false;
             this.equipmentTable.DataSource = db.load();
 
-            // 番号(code) 列 追加
-            this.equipmentTable.Columns[0].DataPropertyName = "code"; // dataTableと対応させる
-            // 名称(name) 列 追加
-            this.equipmentTable.Columns[1].DataPropertyName = "name"; // dataTableと対応させる
-            // 型番(model_number) 列 追加
-            this.equipmentTable.Columns[2].DataPropertyName = "model_number"; // dataTableと対応させる
-            // 場所(location) 列 追加
-            this.equipmentTable.Columns[3].DataPropertyName = "location"; // dataTableと対応させる
-            // 個数(number) 列 追加
-            this.equipmentTable.Columns[4].DataPropertyName = "number"; // dataTableと対応させる
-            // 検品数(inspection) 列 追加
-            this.equipmentTable.Columns[5].DataPropertyName = "inspection"; // dataTableと対応させる
-            // 備考(remarks) 列 追加
-            this.equipmentTable.Columns[6].DataPropertyName = "remarks"; // dataTableと対応させる
+            // equipmentTableに各列を追加する (dataTableと対応させる)
+            this.equipmentTable.Columns[0].DataPropertyName = "code";
+            this.equipmentTable.Columns[1].DataPropertyName = "name";
+            this.equipmentTable.Columns[2].DataPropertyName = "model_number";
+            this.equipmentTable.Columns[3].DataPropertyName = "location";
+            this.equipmentTable.Columns[4].DataPropertyName = "number";
+            this.equipmentTable.Columns[5].DataPropertyName = "inspection";
+            this.equipmentTable.Columns[6].DataPropertyName = "remarks";
         }
 
         #region モード選択ボタン
@@ -63,16 +69,10 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "add";
-            this.executeButton.Text = "新規追加";
 
             // UI切替
-            this.codeBox.Enabled = true;
-            this.nameBox.Enabled = true;
-            this.modelNumberBox.Enabled = true;
-            this.locationBox.Enabled = true;
-            this.numberBox.Enabled = true;
-            this.inspectionBox.Enabled = false;
-            this.remarksBox.Enabled = true;
+            this.executeButton.Text = "新規追加";
+            this.toggleUI(true, true, true, true, true, false, true);
         }
 
         private void deleteButton_Click(object sender, EventArgs e) {
@@ -84,16 +84,10 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "delete";
-            this.executeButton.Text = "削除";
 
             // UI切替
-            this.codeBox.Enabled = false;
-            this.nameBox.Enabled = false;
-            this.modelNumberBox.Enabled = false;
-            this.locationBox.Enabled = false;
-            this.numberBox.Enabled = false;
-            this.inspectionBox.Enabled = false;
-            this.remarksBox.Enabled = false;
+            this.executeButton.Text = "削除";
+            this.toggleUI(false, false, false, false, false, false, false);
         }
 
         private void searchButton_Click(object sender, EventArgs e) {
@@ -108,16 +102,10 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "search";
-            this.executeButton.Text = "検索 (部分一致)";
 
             // UI切替
-            this.codeBox.Enabled = true;
-            this.nameBox.Enabled = true;
-            this.modelNumberBox.Enabled = true;
-            this.locationBox.Enabled = true;
-            this.numberBox.Enabled = true;
-            this.inspectionBox.Enabled = true;
-            this.remarksBox.Enabled = true;
+            this.executeButton.Text = "検索 (部分一致)";
+            this.toggleUI(true, true, true, true, true, true, true);
         }
 
         private void inspectionButton_Click(object sender, EventArgs e) {
@@ -129,18 +117,22 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "inspection";
-            this.executeButton.Text = "検品";
 
             // UI切替
-            this.codeBox.Enabled = true;
-            this.nameBox.Enabled = false;
-            this.modelNumberBox.Enabled = false;
-            this.locationBox.Enabled = false;
-            this.numberBox.Enabled = false;
-            this.inspectionBox.Enabled = true;
-            this.remarksBox.Enabled = false;
+            this.executeButton.Text = "検品";
+            this.toggleUI(true, false, false, false, false, true, false);
         }
 
+        // UI切替
+        private void toggleUI(bool code, bool name, bool model, bool loc, bool num, bool ins, bool re) {
+            this.codeBox.Enabled = code;
+            this.nameBox.Enabled = name;
+            this.modelNumberBox.Enabled = model;
+            this.locationBox.Enabled = loc;
+            this.numberBox.Enabled = num;
+            this.inspectionBox.Enabled = ins;
+            this.remarksBox.Enabled = re;
+        }
         #endregion
 
         #region 実行ボタン動作
@@ -177,7 +169,6 @@ namespace EquipmentManager {
                 MessageBox.Show("番号、名称、個数は必須入力項目です。", "Error");
                 return;
             }
-
             if(code.Length != 7) {
                 MessageBox.Show("番号は1000000～9999999の間で入力してください。", "Error");
                 return;
@@ -399,7 +390,8 @@ namespace EquipmentManager {
             return find;
         }
 
-        
+
         #endregion
+        
     }
 }
