@@ -24,6 +24,16 @@ namespace EquipmentManager {
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            // 保存確認
+            DialogResult result = MessageBox.Show(
+                "データベースを保存しますか。\n保存していないデータは消えてしまいます。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.OK) this.db.update();
+
             // データベース Close
             this.db.disconnect();
 
@@ -37,20 +47,14 @@ namespace EquipmentManager {
             this.equipmentTable.AutoGenerateColumns = false;
             this.equipmentTable.DataSource = db.load();
 
-            // 番号(code) 列 追加
-            this.equipmentTable.Columns[0].DataPropertyName = "code"; // dataTableと対応させる
-            // 名称(name) 列 追加
-            this.equipmentTable.Columns[1].DataPropertyName = "name"; // dataTableと対応させる
-            // 型番(model_number) 列 追加
-            this.equipmentTable.Columns[2].DataPropertyName = "model_number"; // dataTableと対応させる
-            // 場所(location) 列 追加
-            this.equipmentTable.Columns[3].DataPropertyName = "location"; // dataTableと対応させる
-            // 個数(number) 列 追加
-            this.equipmentTable.Columns[4].DataPropertyName = "number"; // dataTableと対応させる
-            // 検品数(inspection) 列 追加
-            this.equipmentTable.Columns[5].DataPropertyName = "inspection"; // dataTableと対応させる
-            // 備考(remarks) 列 追加
-            this.equipmentTable.Columns[6].DataPropertyName = "remarks"; // dataTableと対応させる
+            // equipmentTableに各列を追加する (dataTableと対応させる)
+            this.equipmentTable.Columns[0].DataPropertyName = "code";
+            this.equipmentTable.Columns[1].DataPropertyName = "name";
+            this.equipmentTable.Columns[2].DataPropertyName = "model_number";
+            this.equipmentTable.Columns[3].DataPropertyName = "location";
+            this.equipmentTable.Columns[4].DataPropertyName = "number";
+            this.equipmentTable.Columns[5].DataPropertyName = "inspection";
+            this.equipmentTable.Columns[6].DataPropertyName = "remarks";
         }
 
         #region モード選択ボタン
@@ -63,16 +67,11 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "add";
-            this.executeButton.Text = "新規追加";
 
             // UI切替
-            this.codeBox.Enabled = true;
-            this.nameBox.Enabled = true;
-            this.modelNumberBox.Enabled = true;
-            this.locationBox.Enabled = true;
-            this.numberBox.Enabled = true;
-            this.inspectionBox.Enabled = false;
-            this.remarksBox.Enabled = true;
+            this.executeButton.Text = "新規追加";
+            this.toggleUI(true, true, true, true, true, false, true);
+            this.clearHighlight();
         }
 
         private void deleteButton_Click(object sender, EventArgs e) {
@@ -84,16 +83,11 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "delete";
-            this.executeButton.Text = "削除";
 
             // UI切替
-            this.codeBox.Enabled = false;
-            this.nameBox.Enabled = false;
-            this.modelNumberBox.Enabled = false;
-            this.locationBox.Enabled = false;
-            this.numberBox.Enabled = false;
-            this.inspectionBox.Enabled = false;
-            this.remarksBox.Enabled = false;
+            this.executeButton.Text = "削除";
+            this.toggleUI(false, false, false, false, false, false, false);
+            this.clearHighlight();
         }
 
         private void searchButton_Click(object sender, EventArgs e) {
@@ -108,16 +102,11 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "search";
-            this.executeButton.Text = "検索 (部分一致)";
 
             // UI切替
-            this.codeBox.Enabled = true;
-            this.nameBox.Enabled = true;
-            this.modelNumberBox.Enabled = true;
-            this.locationBox.Enabled = true;
-            this.numberBox.Enabled = true;
-            this.inspectionBox.Enabled = true;
-            this.remarksBox.Enabled = true;
+            this.executeButton.Text = "検索 (部分一致)";
+            this.toggleUI(true, true, true, true, true, true, true);
+            this.clearHighlight();
         }
 
         private void inspectionButton_Click(object sender, EventArgs e) {
@@ -129,18 +118,23 @@ namespace EquipmentManager {
 
             // モード切替
             this.mode = "inspection";
-            this.executeButton.Text = "検品";
 
             // UI切替
-            this.codeBox.Enabled = true;
-            this.nameBox.Enabled = false;
-            this.modelNumberBox.Enabled = false;
-            this.locationBox.Enabled = false;
-            this.numberBox.Enabled = false;
-            this.inspectionBox.Enabled = true;
-            this.remarksBox.Enabled = false;
+            this.executeButton.Text = "検品";
+            this.toggleUI(true, false, false, false, false, true, false);
+            this.reflectHighlight();
         }
 
+        // UI切替
+        private void toggleUI(bool code, bool name, bool model, bool loc, bool num, bool ins, bool re) {
+            this.codeBox.Enabled = code;
+            this.nameBox.Enabled = name;
+            this.modelNumberBox.Enabled = model;
+            this.locationBox.Enabled = loc;
+            this.numberBox.Enabled = num;
+            this.inspectionBox.Enabled = ins;
+            this.remarksBox.Enabled = re;
+        }
         #endregion
 
         #region 実行ボタン動作
@@ -177,7 +171,6 @@ namespace EquipmentManager {
                 MessageBox.Show("番号、名称、個数は必須入力項目です。", "Error");
                 return;
             }
-
             if(code.Length != 7) {
                 MessageBox.Show("番号は1000000～9999999の間で入力してください。", "Error");
                 return;
@@ -211,23 +204,27 @@ namespace EquipmentManager {
             }
 
             DataTable dt = this.db.getDataTable();
-            DataRow[] dr = dt.Select(String.Format("code = {0}", code));
-            foreach(DataRow _dr in dr) {
-                _dr.Delete();
+            DataRow[] drs = dt.Select(String.Format("code = {0}", code));
+            foreach(DataRow dr in drs) {
+                dr.Delete();
             }
         }
         private void executeSearch() {
-
+            
         }
         private void executeInspection() {
             string code = this.codeBox.Text;
             int inspection = int.Parse(this.inspectionBox.Text);
 
+            // 入力反映
             DataTable dt = this.db.getDataTable();
             DataRow[] drs = dt.Select(String.Format("code = {0}", code));
-            foreach (DataRow _dr in drs) {
-                _dr["inspection"] = inspection;
+            foreach (DataRow dr in drs) {
+                dr["inspection"] = inspection;
             }
+
+            // 色付け
+            this.reflectHighlight();
         }
 
         private void codeBox_TextChanged(object sender, EventArgs e) {
@@ -254,8 +251,7 @@ namespace EquipmentManager {
             this.remarksBox.Text = "";
 
             // イメージ欄クリア
-            Graphics pg = Graphics.FromHwnd(this.equipmentImage.Handle);
-            pg.DrawImage(Properties.Resources.noimage, new Point(0, 0)); // クリア
+            this.reflectImage();
         }
         #endregion
 
@@ -268,6 +264,34 @@ namespace EquipmentManager {
         #region データベース 操作
         private void saveButton_Click(object sender, EventArgs e) {
             this.db.update();
+        }
+        private void readButton_Click(object sender, EventArgs e) {
+            DialogResult result = MessageBox.Show(
+                "最後に保存ボタンを押した状態を読出します。\n宜しいですか。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.OK) this.db.read();
+        }
+        #endregion
+
+        #region 検品モード操作
+        private void clearInspectionButton_Click(object sender, EventArgs e) {
+            DialogResult result = MessageBox.Show(
+                "検品列を0クリアしますか。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.OK) {
+                DataTable dt = this.db.getDataTable();
+                DataRow[] drs = dt.Select();
+                foreach (DataRow dr in drs) dr["inspection"] = 0;
+            }
+            if (mode.Equals("inspection")) this.reflectHighlight();
         }
         #endregion
 
@@ -303,11 +327,8 @@ namespace EquipmentManager {
 
         #region バーコードリーダー イベント
         private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e) {
-            // バーコードリーダーより受信
-            string receive = this.serialPort.ReadLine().ToString();
-
-            // 改行コード除去
-            receive = receive.Replace("\r", "").Replace("\n", "");
+            string receive = this.serialPort.ReadLine().ToString(); // バーコードリーダーより受信
+            receive = receive.Replace("\r", "").Replace("\n", "");  // 改行コード除去
 
             // フォーマットチェック
             Barcode b = new Barcode();
@@ -317,14 +338,28 @@ namespace EquipmentManager {
             // 反映
             this.Invoke((MethodInvoker)delegate {
                 this.codeBox.Text = String.Format("{0}", code);
-                this.reflectBox(code, true);
+                bool find = this.reflectBox(code, true);
+
+                // 検品モード時
+                if(find) this.inspectionBox.Focus();
+                if(find && mode.Equals("inspection")) {
+                    DataTable dt = this.db.getDataTable();
+                    DataRow[] drs = dt.Select(String.Format("code = {0}", code));
+                    foreach (DataRow dr in drs) {
+                        if(dr["number"].ToString().Equals("1")) {
+                            dr["inspection"] = 1;
+                        }
+                    }
+                    this.reflectHighlight();
+                }
             });
         }
         #endregion
 
         private void equipmentTable_RowEnter(object sender, DataGridViewCellEventArgs e) {
             int i = e.RowIndex;
-            this.reflectBox(String.Format("{0}", this.equipmentTable.Rows[i].Cells[0].Value), false);
+            string code = String.Format("{0}", this.equipmentTable.Rows[i].Cells[0].Value);
+            this.reflectBox(code, false);
         }
 
         #region 番号を基に各入力欄へ反映
@@ -338,38 +373,40 @@ namespace EquipmentManager {
 
             DataTable dt = this.db.getDataTable();
             DataRow[] drs = dt.Select(String.Format("code = {0}", code));
-            foreach (DataRow _dr in drs) {
+            foreach (DataRow dr in drs) {
                 // 反映
-                this.codeBox.Text = _dr["code"].ToString();
-                this.nameBox.Text = _dr["name"].ToString();
-                this.modelNumberBox.Text = _dr["model_number"].ToString();
-                this.locationBox.Text = _dr["location"].ToString();
-                this.numberBox.Text = _dr["number"].ToString();
-                this.inspectionBox.Text = _dr["inspection"].ToString();
-                this.remarksBox.Text = _dr["remarks"].ToString();
-
+                this.codeBox.Text = dr["code"].ToString();
+                this.nameBox.Text = dr["name"].ToString();
+                this.modelNumberBox.Text = dr["model_number"].ToString();
+                this.locationBox.Text = dr["location"].ToString();
+                this.numberBox.Text = dr["number"].ToString();
+                this.inspectionBox.Text = dr["inspection"].ToString();
+                this.remarksBox.Text = dr["remarks"].ToString();
                 //フォーカス
                 if(focus) {
-                    int index = dt.Rows.IndexOf(_dr);
-                    // Console.WriteLine(index);
+                    int index = dt.Rows.IndexOf(dr);
                     this.equipmentTable.FirstDisplayedScrollingRowIndex = index;
                 }
-
                 // 該当コード発見
                 find = true;
                 break;
             }
-
-            
-            if (!find) {
-                // equipmentTableに該当コードがない
-                this.clearBox(false);
+            if (!find) { // equipmentTableに該当コードがない
+                this.clearBox(false); 
             }
+            this.reflectImage(code);
+            return find;
+        }
 
-            // images配下チェック
+        private void reflectImage() {
+            this.reflectImage("");
+        }
+
+        private void reflectImage(string code) {
             Graphics pg = Graphics.FromHwnd(this.equipmentImage.Handle);
             pg.DrawImage(Properties.Resources.noimage, new Point(0, 0)); // クリア
 
+            // images配下チェック
             string imagePath = String.Format(@"images\\{0}.jpg", code);
             if (File.Exists(imagePath)) {
                 int resizeHeight = this.equipmentImage.Height;
@@ -378,16 +415,14 @@ namespace EquipmentManager {
                 int y = 0;
 
                 Bitmap bmp = new Bitmap(imagePath);
-                if(bmp.Height > bmp.Width) {
-                    // 縦長写真の場合
+                if (bmp.Height > bmp.Width) { // 縦長写真の場合
                     resizeWidth = (int)(bmp.Width * ((double)resizeHeight / (double)bmp.Height));
                     x = (this.equipmentImage.Width - resizeWidth) / 2;
-                } else {
-                    // 横長写真の場合
+                } else { // 横長写真の場合
                     resizeHeight = (int)(bmp.Height * ((double)resizeWidth / (double)bmp.Width));
                     y = (this.equipmentImage.Height - resizeHeight) / 2;
                 }
-                
+
                 Bitmap resizeBmp = new Bitmap(resizeWidth, resizeHeight);
                 Graphics g = Graphics.FromImage(resizeBmp);
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -395,11 +430,39 @@ namespace EquipmentManager {
                 g.Dispose();
                 pg.DrawImage(resizeBmp, new Point(x, y));
             }
+        }
+        #endregion
 
-            return find;
+        #region Hightlight
+        private void reflectHighlight() {
+            DataTable dt = this.db.getDataTable();
+            DataRow[] drs = dt.Select();
+            foreach (DataRow dr in drs) {
+                int num = int.Parse(dr["number"].ToString());
+                int ins = int.Parse(dr["inspection"].ToString());
+                int i = dt.Rows.IndexOf(dr);
+                DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
+                if (ins >= num) {
+                    cellStyle.BackColor = Color.LightBlue;
+                } else {
+                    cellStyle.BackColor = Color.Pink;
+                }
+                this.equipmentTable.Rows[i].DefaultCellStyle = cellStyle;
+            }
         }
 
-        
+        private void clearHighlight() {
+            DataTable dt = this.db.getDataTable();
+            DataRow[] drs = dt.Select();
+            foreach (DataRow dr in drs) {
+                int i = dt.Rows.IndexOf(dr);
+                DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
+                cellStyle.BackColor = Color.White;
+                this.equipmentTable.Rows[i].DefaultCellStyle = cellStyle;
+            }
+        }
         #endregion
+
+        
     }
 }

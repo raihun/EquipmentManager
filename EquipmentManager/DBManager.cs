@@ -35,6 +35,12 @@ namespace EquipmentManager {
             return this.dataTable;
         }
 
+        public void read() {
+            this.dataTable.Clear();
+            this.adapter = new SQLiteDataAdapter("SELECT * FROM equipment;", this.con);
+            this.adapter.Fill(this.dataTable);
+        }
+
         public void update() {
             try {
                 using (SQLiteTransaction tran = this.con.BeginTransaction()) {
