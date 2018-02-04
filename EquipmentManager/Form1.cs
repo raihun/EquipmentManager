@@ -73,6 +73,7 @@ namespace EquipmentManager {
             // UI切替
             this.executeButton.Text = "新規追加";
             this.toggleUI(true, true, true, true, true, false, true);
+            this.clearHighlight();
         }
 
         private void deleteButton_Click(object sender, EventArgs e) {
@@ -88,6 +89,7 @@ namespace EquipmentManager {
             // UI切替
             this.executeButton.Text = "削除";
             this.toggleUI(false, false, false, false, false, false, false);
+            this.clearHighlight();
         }
 
         private void searchButton_Click(object sender, EventArgs e) {
@@ -106,6 +108,7 @@ namespace EquipmentManager {
             // UI切替
             this.executeButton.Text = "検索 (部分一致)";
             this.toggleUI(true, true, true, true, true, true, true);
+            this.clearHighlight();
         }
 
         private void inspectionButton_Click(object sender, EventArgs e) {
@@ -121,6 +124,7 @@ namespace EquipmentManager {
             // UI切替
             this.executeButton.Text = "検品";
             this.toggleUI(true, false, false, false, false, true, false);
+            this.reflectHighlight();
         }
 
         // UI切替
@@ -202,23 +206,27 @@ namespace EquipmentManager {
             }
 
             DataTable dt = this.db.getDataTable();
-            DataRow[] dr = dt.Select(String.Format("code = {0}", code));
-            foreach(DataRow _dr in dr) {
-                _dr.Delete();
+            DataRow[] drs = dt.Select(String.Format("code = {0}", code));
+            foreach(DataRow dr in drs) {
+                dr.Delete();
             }
         }
         private void executeSearch() {
-
+            
         }
         private void executeInspection() {
             string code = this.codeBox.Text;
             int inspection = int.Parse(this.inspectionBox.Text);
 
+            // 入力反映
             DataTable dt = this.db.getDataTable();
             DataRow[] drs = dt.Select(String.Format("code = {0}", code));
-            foreach (DataRow _dr in drs) {
-                _dr["inspection"] = inspection;
+            foreach (DataRow dr in drs) {
+                dr["inspection"] = inspection;
             }
+
+            // 色付け
+            this.reflectHighlight();
         }
 
         private void codeBox_TextChanged(object sender, EventArgs e) {
@@ -245,8 +253,7 @@ namespace EquipmentManager {
             this.remarksBox.Text = "";
 
             // イメージ欄クリア
-            Graphics pg = Graphics.FromHwnd(this.equipmentImage.Handle);
-            pg.DrawImage(Properties.Resources.noimage, new Point(0, 0)); // クリア
+            this.reflectImage();
         }
         #endregion
 
@@ -329,38 +336,40 @@ namespace EquipmentManager {
 
             DataTable dt = this.db.getDataTable();
             DataRow[] drs = dt.Select(String.Format("code = {0}", code));
-            foreach (DataRow _dr in drs) {
+            foreach (DataRow dr in drs) {
                 // 反映
-                this.codeBox.Text = _dr["code"].ToString();
-                this.nameBox.Text = _dr["name"].ToString();
-                this.modelNumberBox.Text = _dr["model_number"].ToString();
-                this.locationBox.Text = _dr["location"].ToString();
-                this.numberBox.Text = _dr["number"].ToString();
-                this.inspectionBox.Text = _dr["inspection"].ToString();
-                this.remarksBox.Text = _dr["remarks"].ToString();
-
+                this.codeBox.Text = dr["code"].ToString();
+                this.nameBox.Text = dr["name"].ToString();
+                this.modelNumberBox.Text = dr["model_number"].ToString();
+                this.locationBox.Text = dr["location"].ToString();
+                this.numberBox.Text = dr["number"].ToString();
+                this.inspectionBox.Text = dr["inspection"].ToString();
+                this.remarksBox.Text = dr["remarks"].ToString();
                 //フォーカス
                 if(focus) {
-                    int index = dt.Rows.IndexOf(_dr);
-                    // Console.WriteLine(index);
+                    int index = dt.Rows.IndexOf(dr);
                     this.equipmentTable.FirstDisplayedScrollingRowIndex = index;
                 }
-
                 // 該当コード発見
                 find = true;
                 break;
             }
-
-            
-            if (!find) {
-                // equipmentTableに該当コードがない
-                this.clearBox(false);
+            if (!find) { // equipmentTableに該当コードがない
+                this.clearBox(false); 
             }
+            this.reflectImage(code);
+            return find;
+        }
 
-            // images配下チェック
+        private void reflectImage() {
+            this.reflectImage("");
+        }
+
+        private void reflectImage(string code) {
             Graphics pg = Graphics.FromHwnd(this.equipmentImage.Handle);
             pg.DrawImage(Properties.Resources.noimage, new Point(0, 0)); // クリア
 
+            // images配下チェック
             string imagePath = String.Format(@"images\\{0}.jpg", code);
             if (File.Exists(imagePath)) {
                 int resizeHeight = this.equipmentImage.Height;
@@ -369,16 +378,14 @@ namespace EquipmentManager {
                 int y = 0;
 
                 Bitmap bmp = new Bitmap(imagePath);
-                if(bmp.Height > bmp.Width) {
-                    // 縦長写真の場合
+                if (bmp.Height > bmp.Width) { // 縦長写真の場合
                     resizeWidth = (int)(bmp.Width * ((double)resizeHeight / (double)bmp.Height));
                     x = (this.equipmentImage.Width - resizeWidth) / 2;
-                } else {
-                    // 横長写真の場合
+                } else { // 横長写真の場合
                     resizeHeight = (int)(bmp.Height * ((double)resizeWidth / (double)bmp.Width));
                     y = (this.equipmentImage.Height - resizeHeight) / 2;
                 }
-                
+
                 Bitmap resizeBmp = new Bitmap(resizeWidth, resizeHeight);
                 Graphics g = Graphics.FromImage(resizeBmp);
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -386,12 +393,37 @@ namespace EquipmentManager {
                 g.Dispose();
                 pg.DrawImage(resizeBmp, new Point(x, y));
             }
+        }
+        #endregion
 
-            return find;
+        #region Hightlight
+        private void reflectHighlight() {
+            DataTable dt = this.db.getDataTable();
+            DataRow[] drs = dt.Select();
+            foreach (DataRow dr in drs) {
+                int num = int.Parse(dr["number"].ToString());
+                int ins = int.Parse(dr["inspection"].ToString());
+                int i = dt.Rows.IndexOf(dr);
+                DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
+                if (ins >= num) {
+                    cellStyle.BackColor = Color.LightBlue;
+                } else {
+                    cellStyle.BackColor = Color.Pink;
+                }
+                this.equipmentTable.Rows[i].DefaultCellStyle = cellStyle;
+            }
         }
 
-
+        private void clearHighlight() {
+            DataTable dt = this.db.getDataTable();
+            DataRow[] drs = dt.Select();
+            foreach (DataRow dr in drs) {
+                int i = dt.Rows.IndexOf(dr);
+                DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
+                cellStyle.BackColor = Color.White;
+                this.equipmentTable.Rows[i].DefaultCellStyle = cellStyle;
+            }
+        }
         #endregion
-        
     }
 }
