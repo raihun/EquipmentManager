@@ -62,11 +62,14 @@
             this.databaseGroupBox = new System.Windows.Forms.GroupBox();
             this.saveButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
+            this.inspectionGroupBox = new System.Windows.Forms.GroupBox();
+            this.clearInspectionButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.equipmentImage)).BeginInit();
             this.modeGroup.SuspendLayout();
             this.barcodeReaderSettingGroupBox.SuspendLayout();
             this.databaseGroupBox.SuspendLayout();
+            this.inspectionGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // equipmentTable
@@ -371,7 +374,7 @@
             this.databaseGroupBox.Controls.Add(this.saveButton);
             this.databaseGroupBox.Location = new System.Drawing.Point(957, 589);
             this.databaseGroupBox.Name = "databaseGroupBox";
-            this.databaseGroupBox.Size = new System.Drawing.Size(300, 42);
+            this.databaseGroupBox.Size = new System.Drawing.Size(146, 42);
             this.databaseGroupBox.TabIndex = 23;
             this.databaseGroupBox.TabStop = false;
             this.databaseGroupBox.Text = "■ データベース 操作";
@@ -396,11 +399,32 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
+            // inspectionGroupBox
+            // 
+            this.inspectionGroupBox.Controls.Add(this.clearInspectionButton);
+            this.inspectionGroupBox.Location = new System.Drawing.Point(1111, 589);
+            this.inspectionGroupBox.Name = "inspectionGroupBox";
+            this.inspectionGroupBox.Size = new System.Drawing.Size(146, 42);
+            this.inspectionGroupBox.TabIndex = 25;
+            this.inspectionGroupBox.TabStop = false;
+            this.inspectionGroupBox.Text = "■ 検品モード 操作";
+            // 
+            // clearInspectionButton
+            // 
+            this.clearInspectionButton.Location = new System.Drawing.Point(6, 13);
+            this.clearInspectionButton.Name = "clearInspectionButton";
+            this.clearInspectionButton.Size = new System.Drawing.Size(108, 23);
+            this.clearInspectionButton.TabIndex = 3;
+            this.clearInspectionButton.Text = "検品数0クリア";
+            this.clearInspectionButton.UseVisualStyleBackColor = true;
+            this.clearInspectionButton.Click += new System.EventHandler(this.clearInspectionButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.inspectionGroupBox);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.databaseGroupBox);
             this.Controls.Add(this.barcodeReaderSettingGroupBox);
@@ -434,6 +458,7 @@
             this.barcodeReaderSettingGroupBox.ResumeLayout(false);
             this.barcodeReaderSettingGroupBox.PerformLayout();
             this.databaseGroupBox.ResumeLayout(false);
+            this.inspectionGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -478,6 +503,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn inspection;
         private System.Windows.Forms.DataGridViewTextBoxColumn remarks;
         private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.GroupBox inspectionGroupBox;
+        private System.Windows.Forms.Button clearInspectionButton;
     }
 }
 

@@ -32,9 +32,7 @@ namespace EquipmentManager {
                 MessageBoxIcon.Question,
                 MessageBoxDefaultButton.Button2
             );
-            if (result == DialogResult.Yes) {
-                this.db.update();
-            }
+            if (result == DialogResult.OK) this.db.update();
 
             // データベース Close
             this.db.disconnect();
@@ -324,8 +322,8 @@ namespace EquipmentManager {
                             dr["inspection"] = 1;
                         }
                     }
+                    this.reflectHighlight();
                 }
-                this.reflectHighlight();
             });
         }
         #endregion
@@ -433,6 +431,24 @@ namespace EquipmentManager {
                 cellStyle.BackColor = Color.White;
                 this.equipmentTable.Rows[i].DefaultCellStyle = cellStyle;
             }
+        }
+        #endregion
+
+        #region 検品モード操作
+        private void clearInspectionButton_Click(object sender, EventArgs e) {
+            DialogResult result = MessageBox.Show(
+                "検品列を0クリアしますか。",
+                "確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+            if (result == DialogResult.OK) {
+                DataTable dt = this.db.getDataTable();
+                DataRow[] drs = dt.Select();
+                foreach (DataRow dr in drs) dr["inspection"] = 0;
+            }
+            if (mode.Equals("inspection")) this.reflectHighlight();
         }
         #endregion
     }
